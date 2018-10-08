@@ -1,19 +1,30 @@
-package org.lappsgrid.eager.query
+package org.lappsgrid.eager.query.elasticsearch
 
 import org.lappsgrid.eager.mining.api.Query
 import org.lappsgrid.eager.mining.api.QueryProcessor
+import org.lappsgrid.eager.query.StopWords
 
 /**
- * Removes stop words and creates a conjunction of the remaining words.
+ *
  */
-class SimpleQueryProcessor implements QueryProcessor {
+class GDDSnippetQueryProcessor implements QueryProcessor {
+    boolean inclusive = false
+    int limit = 10
 
     StopWords stopwords = new StopWords()
 
     Query transform(String question) {
         String[] tokens = question.trim().split('\\W+')
         List<String> terms = removeStopWords(tokens)
-        String query = terms.collect { 'body:' + it }.join(' AND ')
+        if (question.endsWith('?')) {
+            question = question[0..-2]
+        }
+        String encoded = URLEncoder.encode(question, 'UTF-8')
+
+        String query = "https://geodeepdive.org/api/snippets?limit=$limit&term=$encoded&clean"
+        if (inclusive) {
+            query += "&inclusive=true"
+        }
 
         return new Query()
                 .query(query)
@@ -30,5 +41,6 @@ class SimpleQueryProcessor implements QueryProcessor {
         }
         return tokens.inject([], filter)
     }
+
 
 }
