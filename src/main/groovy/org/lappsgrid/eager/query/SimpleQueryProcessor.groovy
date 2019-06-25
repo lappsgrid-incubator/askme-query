@@ -2,11 +2,16 @@ package org.lappsgrid.eager.query
 
 import org.lappsgrid.eager.mining.api.Query
 import org.lappsgrid.eager.mining.api.QueryProcessor
+import groovy.util.logging.Slf4j
+import org.lappsgrid.rabbitmq.topic.MailBox
 
 /**
  * Removes stop words and creates a conjunction of the remaining words.
  */
+@Slf4j("logger")
 class SimpleQueryProcessor implements QueryProcessor {
+    static final String BOX = 'query receiver'
+
 
     StopWords stopwords = new StopWords()
 
@@ -29,6 +34,28 @@ class SimpleQueryProcessor implements QueryProcessor {
             return list
         }
         return tokens.inject([], filter)
+    }
+    void run(){
+        logger.info "Staring the query receiver"
+        //print("Starting the query receiver")
+        MailBox box = new MailBox('askme.prototype', BOX, 'rabbitmq.lappsgrid.org'){
+            void recv(String question){
+                logger.trace("Received a question: {}", question)
+                //print("Received a question: ")
+                print(question)
+            }
+        }
+
+        //Not sure how to have Web communicate the latch with query
+        //block()
+        sleep(10000)
+        logger.debug "query receiver shutting down."
+        box.close()
+        logger.info "query receiver terminated."
+    }
+
+    static void main(String[] args) {
+        new SimpleQueryProcessor().run()
     }
 
 }
