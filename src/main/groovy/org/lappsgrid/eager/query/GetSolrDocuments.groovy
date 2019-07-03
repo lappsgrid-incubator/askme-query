@@ -12,6 +12,7 @@ import org.lappsgrid.eager.mining.api.Query
 @Slf4j("logger")
 class GetSolrDocuments {
 
+    /**
     //Environment env
     ConfigObject config
 
@@ -51,28 +52,31 @@ class GetSolrDocuments {
         set(m, 'work.dir')
         set(m, 'question.dir')
     }
-
+    **/
     //DOES THIS NEED TO BE PRIVATE
-    public Integer answer(Query query) {
+    public String answer(Query query) {
 
-        init()
+        //init()
         logger.debug("Generating answer.")
 
         logger.trace("Creating CloudSolrClient")
-        SolrClient solr = new CloudSolrClient.Builder([config.solr.host]).build()
-        //SolrClient solr = new CloudSolrClient.Builder(["http://solr1.lappsgrid.org:8983/solr"]).build();
+        //SolrClient solr = new CloudSolrClient.Builder([config.solr.host]).build()
+        //SolrClient solr = new CloudSolrClient.Builder(["http://solr1.lappsgrid.org:8983/solr"]).build()
+        SolrClient solr = new CloudSolrClient.Builder(["http://129.114.16.34:8983/solr"]).build()
+
 
         logger.trace("Generating query")
         Map solrParams = [:]
         solrParams.q = query.query
         solrParams.fl = 'pmid,pmc,doi,year,title,path,abstract,body'
-        solrParams.rows = config.solr.rows
+        //solrParams.rows = config.solr.rows
 
         MapSolrParams queryParams = new MapSolrParams(solrParams)
-        String collection = config.solr.collection
+        //String collection = config.solr.collection
 
         logger.trace("Sending query to Solr")
-        final QueryResponse response = solr.query(collection, queryParams)
+        //final QueryResponse response = solr.query(collection, queryParams)
+        final QueryResponse response = solr.query('',queryParams)
         final SolrDocumentList documents = response.getResults()
 
         int n = documents.size()
@@ -82,7 +86,7 @@ class GetSolrDocuments {
         result.size = n
 
         logger.trace("Received {} documents", n)
-        return n
+        return ""
     }
 
 }
