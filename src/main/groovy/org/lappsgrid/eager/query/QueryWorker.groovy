@@ -6,19 +6,22 @@ import org.lappsgrid.rabbitmq.tasks.TaskQueue
 import org.lappsgrid.rabbitmq.tasks.Worker
 
 import groovy.util.logging.Slf4j
+import org.lappsgrid.rabbitmq.topic.PostOffice
+
+import java.util.concurrent.CountDownLatch
 
 @Slf4j("logger")
-class QueryWorker extends Worker {
-    static final String TASK_QUEUE_NAME = "question_queue"
-    //Should this be private?
-    static final TaskQueue question_queue = new TaskQueue(TASK_QUEUE_NAME,'rabbitmq.lappsgrid.org')
+class QueryWorker extends Worker{
+    int id
+    CountDownLatch latch
+    PostOffice po
 
-
-    QueryWorker(){
-        super(question_queue)
+    QueryWorker(int id, CountDownLatch latch, PostOffice po, TaskQueue queue){
+        super(queue)
+        this.id = id
+        this.po = po
+        this.latch = latch
     }
-
-
 
     String process(String question){
         SimpleQueryProcessor queryProcessor = new SimpleQueryProcessor()
@@ -36,14 +39,24 @@ class QueryWorker extends Worker {
     }
 
     @Override
-    void work(String question) {
+    void work(String question){
         logger.info("Starting the QueryWorker, answering question: {}", question)
         String answer = process(question)
         logger.info("Answered question: {}", question)
         logger.info("Answer: {}", answer)
     }
 
+
+
+
     /**
+    Worker w = new Worker(question_queue) {
+        @Override
+        void work(String question) {
+
+
+        }
+    }
     void run(){
 
         MailBox box = new MailBox('askme.prototype', BOX, 'rabbitmq.lappsgrid.org'){
