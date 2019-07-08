@@ -26,7 +26,7 @@ class QueryWorker extends Worker{
     String process(String question){
         SimpleQueryProcessor queryProcessor = new SimpleQueryProcessor()
         GetSolrDocuments documentGetter = new GetSolrDocuments()
-        logger.trace("Received a question: {}", question)
+        logger.trace("Answering question: {}", question)
         Query query = queryProcessor.transform(question)
 
         //need env for solr config, temp not working
@@ -40,7 +40,7 @@ class QueryWorker extends Worker{
 
     @Override
     void work(String question){
-        logger.info("Starting the QueryWorker, answering question: {}", question)
+        logger.info("Starting the QueryWorker, received question: {}", question)
         String answer = process(question)
         logger.info("Answered question: {}", question)
         logger.info("Answer: {}", answer)

@@ -9,17 +9,15 @@ import org.lappsgrid.rabbitmq.topic.MessageBox
 import org.lappsgrid.rabbitmq.topic.PostOffice
 
 /**
- * The QueueManager waits for messages to arrive on its {@link org.lappsgrid.eager.rabbitmq.topic.MessageBox MessageBox} and
- * dispatches them to a {@link org.lappsgrid.eager.rabbitmq.tasks.TaskQueue TaskQueue}.  The TaskQueue is serviced by
- * the specified number of workers.
+ * Taken from org.lappsgrid.rabbitmq Distributed Task Example
  */
+
 class QueueManager extends MessageBox {
     TaskQueue queue
     PostOffice po
     List<Worker> workers
 
     /**
-     * The QueueManager listens for messages to arrive in its mailbox and dispatches them to a ${link TaskQueue}.
      *
      * @param exchange the RabbitMQ message exchange.
      * @param address  the name of our mailbox.
@@ -40,7 +38,6 @@ class QueueManager extends MessageBox {
     }
 
     /**
-     * The QueueManager listens for messages to arrive in its mailbox and dispatches them to a ${link TaskQueue}.
      *
      * @param exchange the RabbitMQ message exchange.
      * @param address  the name of our mailbox.
