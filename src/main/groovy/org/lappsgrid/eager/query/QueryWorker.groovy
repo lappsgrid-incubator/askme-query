@@ -36,7 +36,7 @@ class QueryWorker extends Worker{
     void work(String json){
         logger.info("Starting the QueryWorker, received json: {}", json)
         Message question = Serializer.parse(json, Message)
-        String query = process(question.body.toString())
+        Query query = process(question.body.toString())
         question.setBody(query)
         question.setRoute(['web'])
         po.send(question)
