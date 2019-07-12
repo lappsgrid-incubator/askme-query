@@ -1,10 +1,11 @@
 package org.lappsgrid.eager.query
 
 import org.lappsgrid.eager.mining.api.Query
+import org.lappsgrid.rabbitmq.Message
 import org.lappsgrid.rabbitmq.topic.MailBox
 import org.lappsgrid.rabbitmq.tasks.TaskQueue
 import org.lappsgrid.rabbitmq.tasks.Worker
-
+import org.lappsgrid.eager.mining.core.json.Serializer
 import groovy.util.logging.Slf4j
 import org.lappsgrid.rabbitmq.topic.PostOffice
 
@@ -23,60 +24,23 @@ class QueryWorker extends Worker{
         this.latch = latch
     }
 
-    String process(String question){
+    Query process(String question){
         SimpleQueryProcessor queryProcessor = new SimpleQueryProcessor()
-        GetSolrDocuments documentGetter = new GetSolrDocuments()
-        logger.trace("Answering question: {}", question)
+        logger.trace("Processing question: {}", question)
         Query query = queryProcessor.transform(question)
-
-        //need env for solr config, temp not working
-        //documentGetter.answer(query)
-        //next, send along documents to NLP
-
-        //temp for testing
-        return question
+        return query
 
     }
 
     @Override
-    void work(String question){
-        logger.info("Starting the QueryWorker, received question: {}", question)
-        String answer = process(question)
-        logger.info("Answered question: {}", question)
-        logger.info("Answer: {}", answer)
+    void work(String json){
+        logger.info("Starting the QueryWorker, received json: {}", json)
+        Message question = Serializer.parse(json, Message)
+        String query = process(question.body.toString())
+        question.setBody(query)
+        question.setRoute(['web'])
+        po.send(question)
+        logger.info('Processed question, query sent back to web')
+        logger.info(Serializer.toJson(question))
     }
-
-
-
-
-    /**
-    Worker w = new Worker(question_queue) {
-        @Override
-        void work(String question) {
-
-
-        }
-    }
-    void run(){
-
-        MailBox box = new MailBox('askme.prototype', BOX, 'rabbitmq.lappsgrid.org'){
-            void recv(String question){
-
-                SimpleQueryProcessor queryProcessor = new SimpleQueryProcessor()
-                GetSolrDocuments documentGetter = new GetSolrDocuments()
-                logger.trace("Received a question: {}", question)
-                Query query = queryProcessor.transform(question)
-
-                //need env for solr config, temp not working
-                documentGetter.answer(query)
-                //next, send along documents to NLP
-
-            }
-        }
-    }
-
-    static void main(String[] args) {
-        new QueryWorker().run()
-    }
-    **/
 }
