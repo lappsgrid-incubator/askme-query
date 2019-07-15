@@ -34,13 +34,13 @@ class QueryWorker extends Worker{
 
     @Override
     void work(String json){
-        logger.info("Starting the QueryWorker, received json: {}", json)
         Message question = Serializer.parse(json, Message)
+        logger.info("Starting a QueryWorker for question {}", question.getId())
         Query query = process(question.body.toString())
         question.setBody(query)
-        question.setRoute(['web'])
+        question.setRoute(['web.mailbox'])
+        question.setCommand('query')
         po.send(question)
         logger.info('Processed question, query sent back to web')
-        logger.info(Serializer.toJson(question))
     }
 }
