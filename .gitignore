@@ -4,5 +4,8 @@
 *.iws
 *.iml
 target/
+*.log
+*.gz
+dependency-reduced.pom
 
 
