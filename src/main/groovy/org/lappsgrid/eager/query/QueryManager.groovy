@@ -1,17 +1,8 @@
 package org.lappsgrid.eager.query
 
-import com.rabbitmq.client.Consumer
-import com.rabbitmq.client.DefaultConsumer
-import org.lappsgrid.eager.mining.api.Query
-import org.lappsgrid.rabbitmq.Message
-import org.lappsgrid.rabbitmq.tasks.TaskQueue
-import org.lappsgrid.rabbitmq.topic.MailBox
 import groovy.util.logging.Slf4j
-import org.lappsgrid.rabbitmq.topic.MessageBox
 import org.lappsgrid.rabbitmq.topic.PostOffice
-import org.lappsgrid.rabbitmq.SimpleConsumer
-import org.lappsgrid.serialization.Serializer
-import org.lappsgrid.eager.query.QueryWorker
+
 
 
 @Slf4j("logger")

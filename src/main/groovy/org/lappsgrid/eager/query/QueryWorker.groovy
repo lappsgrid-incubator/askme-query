@@ -1,15 +1,18 @@
 package org.lappsgrid.eager.query
 
 import org.lappsgrid.eager.mining.api.Query
+
+
+//import org.lappsgrid.eager.mining.core.json.Serializer
+import org.lappsgrid.serialization.Serializer
+
 import org.lappsgrid.rabbitmq.Message
-import org.lappsgrid.rabbitmq.topic.MailBox
 import org.lappsgrid.rabbitmq.tasks.TaskQueue
 import org.lappsgrid.rabbitmq.tasks.Worker
-import org.lappsgrid.eager.mining.core.json.Serializer
-import groovy.util.logging.Slf4j
 import org.lappsgrid.rabbitmq.topic.PostOffice
-
 import java.util.concurrent.CountDownLatch
+import groovy.util.logging.Slf4j
+
 
 @Slf4j("logger")
 class QueryWorker extends Worker{
