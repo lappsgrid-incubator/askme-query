@@ -7,7 +7,10 @@ import org.lappsgrid.rabbitmq.tasks.TaskQueue
 import org.lappsgrid.rabbitmq.tasks.Worker
 import org.lappsgrid.rabbitmq.topic.MessageBox
 import org.lappsgrid.rabbitmq.topic.PostOffice
+import groovy.util.logging.Slf4j
 
+
+@Slf4j("logger")
 /**
  * Taken from org.lappsgrid.rabbitmq Distributed Task Example
  */
@@ -66,6 +69,17 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
-        queue.send(Serializer.toJson(message))
+        if(message.getBody() == 'EXIT'){
+            shutdown()
+        }
+        else {
+            queue.send(Serializer.toJson(message))
+        }
+    }
+    void shutdown(){
+        logger.info('Received shutdown message, terminating askme-query')
+        po.close()
+        logger.info('askme-query terminated')
+        System.exit(0)
     }
 }
