@@ -55,7 +55,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.lappsgrid.eager.query.QueryManager</mainClass>
+                                    <mainClass>org.lappsgrid.askme.query.QueryManager</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
@@ -76,7 +76,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.lappsgrid.eager.query.QueryManager</mainClass>
+                                    <mainClass>QueryManager</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
