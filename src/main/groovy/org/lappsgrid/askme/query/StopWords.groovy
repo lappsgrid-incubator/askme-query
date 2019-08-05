@@ -1,4 +1,4 @@
-package org.lappsgrid.eager.query
+package org.lappsgrid.askme.query
 
 /**
  * Manages a List of words that are the stop words for some specific domain

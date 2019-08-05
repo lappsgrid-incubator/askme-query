@@ -1,4 +1,4 @@
-package org.lappsgrid.eager.query.elasticsearch
+package org.lappsgrid.askme.query.elasticsearch
 
 import org.elasticsearch.index.query.Operator
 import org.lappsgrid.eager.mining.api.Query

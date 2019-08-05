@@ -1,4 +1,4 @@
-package org.lappsgrid.eager.query
+package org.lappsgrid.askme.query
 
 import groovy.util.logging.Slf4j
 import org.lappsgrid.rabbitmq.topic.PostOffice

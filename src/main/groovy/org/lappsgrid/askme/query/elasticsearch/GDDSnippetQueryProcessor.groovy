@@ -1,8 +1,8 @@
-package org.lappsgrid.eager.query.elasticsearch
+package org.lappsgrid.askme.query.elasticsearch
 
 import org.lappsgrid.eager.mining.api.Query
 import org.lappsgrid.eager.mining.api.QueryProcessor
-import org.lappsgrid.eager.query.StopWords
+import org.lappsgrid.askme.query.StopWords
 
 /**
  *

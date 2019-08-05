@@ -1,6 +1,5 @@
-package org.lappsgrid.eager.query
+package org.lappsgrid.askme.query
 
-import org.lappsgrid.eager.query.QueryWorker
 import org.lappsgrid.rabbitmq.tasks.TaskQueue
 import org.lappsgrid.rabbitmq.topic.PostOffice
 
