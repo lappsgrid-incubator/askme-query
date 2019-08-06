@@ -70,7 +70,7 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
-        if(message.getBody() == 'EXIT'){
+        if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
             shutdown()
         }
         else {
@@ -78,9 +78,9 @@ class QueueManager extends MessageBox {
         }
     }
     void shutdown(){
-        logger.info('Received shutdown message, terminating askme-query')
-        po.close()
-        logger.info('askme-query terminated')
+        logger.info('Received shutdown message, terminating Query service')
+        close()
+        logger.info('Query service terminated')
         System.exit(0)
     }
 }
