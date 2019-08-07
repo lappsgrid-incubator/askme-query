@@ -23,8 +23,8 @@ class SimpleQueryProcessorTest {
 
         assert ["process", "query"] == queryProcessor.removeStopWords(q1)
         assert [] == queryProcessor.removeStopWords(q2)
-        assert ["nothin", "g", "see", "nywhere"] == queryProcessor.removeStopWords(q3)
-        //assert ["nothin", "g", "see", "@nywh3r3"] == queryProcessor.removeStopWords(q3)
+        //assert ["nothin", "g", "see", "nywhere"] == queryProcessor.removeStopWords(q3)
+        assert ["nothin", "g", "see", "@nywh3r3"] == queryProcessor.removeStopWords(q3)
 
 
     }
@@ -49,10 +49,10 @@ class SimpleQueryProcessorTest {
         assert "body:get AND body:documents" == query2.query
 
         assert q3 == query3.question
-        assert ["don", "t", "fail", "now"] == query3.terms
-        assert "body:don AND body:t AND body:fail AND body:now" == query3.query
-        //assert ["fail", "now"] == query3.terms
-        //assert "body:fail AND body:now" == query3.query
+        //assert ["don", "t", "fail", "now"] == query3.terms
+        //assert "body:don AND body:t AND body:fail AND body:now" == query3.query
+        assert ["fail", "now"] == query3.terms
+        assert "body:fail AND body:now" == query3.query
 
     }
 
