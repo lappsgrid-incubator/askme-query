@@ -70,15 +70,21 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
+        logger.info(message.getCommand())
         if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
             shutdown()
+            return
+        }
+        if(checkMessage(message)){
+            queue.send(Serializer.toJson(message))
+            return
         }
         else {
-            if(checkMessage(message)){
-                queue.send(Serializer.toJson(message))
-            }
+            logger.info("Message {} terminated", message.getId())
+            return
         }
     }
+
     void shutdown(){
         logger.info('Received shutdown message, terminating Query service')
         close()
@@ -86,19 +92,16 @@ class QueueManager extends MessageBox {
         System.exit(0)
     }
     boolean checkMessage(Message message) {
-        if (!(message.getId() && message.getBody())) {
+        if (!message.getBody()) {
             Map error_check = [:]
             error_check.origin = "Query"
             error_check.messageId = message.getId()
-            if (message.getId() == '') {
-                logger.info('ERROR: Message is missing Id')
-                error_check.Id = 'MISSING'
-            }
+
             if (message.getBody() == '') {
-                logger.info('ERROR: Message has empty body')
+                logger.info('ERROR: Message {} has empty body', message.getId())
                 error_check.body = 'MISSING'
             }
-            logger.info('Notifying Web service of error, Message {} terminated', message.getId())
+            logger.info('Notifying Web service of error')
             Message error_message = new Message()
             error_message.setCommand('ERROR')
             error_message.setBody(error_check)
