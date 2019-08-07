@@ -70,11 +70,12 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
-        if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
-            shutdown()
-        }
-        else {
-            queue.send(Serializer.toJson(message))
+        if(checkMessage(message)) {
+            if (message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT') {
+                shutdown()
+            } else {
+                queue.send(Serializer.toJson(message))
+            }
         }
     }
     void shutdown(){
@@ -82,5 +83,28 @@ class QueueManager extends MessageBox {
         close()
         logger.info('Query service terminated')
         System.exit(0)
+    }
+    boolean checkMessage(Message message) {
+        if (!(message.getId() && message.getBody())) {
+            Map error_check = [:]
+            error_check.origin = "Query"
+            error_check.messageId = message.getId()
+            if (message.getId() == '') {
+                logger.info('ERROR: Message is missing Id')
+                error_check.Id = 'MISSING'
+            }
+            if (message.getBody() == '') {
+                logger.info('ERROR: Message has empty body')
+                error_check.body = 'MISSING'
+            }
+            logger.info('Notifying Web service of error, message terminated')
+            Message error_message = new Message()
+            error_message.setCommand('ERROR')
+            error_message.setBody(error_check)
+            error_message.route('web.mailbox')
+            po.send(error_message)
+            return false
+        }
+        return true
     }
 }
