@@ -24,7 +24,7 @@ class SimpleQueryProcessorTest {
         assert ["process", "query"] == queryProcessor.removeStopWords(q1)
         assert [] == queryProcessor.removeStopWords(q2)
         //assert ["nothin", "g", "see", "nywhere"] == queryProcessor.removeStopWords(q3)
-        assert ["nothin", "g", "see", "@nywh3r3"] == queryProcessor.removeStopWords(q3)
+        assert ["nothin", "g", "see", "nywhere"] == queryProcessor.removeStopWords(q3)
 
 
     }
