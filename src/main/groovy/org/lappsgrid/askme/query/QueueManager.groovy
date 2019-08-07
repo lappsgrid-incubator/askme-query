@@ -70,10 +70,11 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
-        if(checkMessage(message)) {
-            if (message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT') {
-                shutdown()
-            } else {
+        if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
+            shutdown()
+        }
+        else {
+            if(checkMessage(message)){
                 queue.send(Serializer.toJson(message))
             }
         }
@@ -97,7 +98,7 @@ class QueueManager extends MessageBox {
                 logger.info('ERROR: Message has empty body')
                 error_check.body = 'MISSING'
             }
-            logger.info('Notifying Web service of error, message terminated')
+            logger.info('Notifying Web service of error, Message {} terminated', message.getId())
             Message error_message = new Message()
             error_message.setCommand('ERROR')
             error_message.setBody(error_check)
