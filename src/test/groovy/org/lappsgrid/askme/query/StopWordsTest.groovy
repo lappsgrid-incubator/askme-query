@@ -1,4 +1,4 @@
-package org.lappsgrid.eager.query
+package org.lappsgrid.askme.query
 
 import org.junit.Test
 
