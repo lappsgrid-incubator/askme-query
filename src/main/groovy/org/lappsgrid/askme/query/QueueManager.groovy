@@ -70,18 +70,15 @@ class QueueManager extends MessageBox {
 
     @Override
     void recv(Message message) {
-        logger.info(message.getCommand())
         if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
             shutdown()
             return
         }
         if(checkMessage(message)){
             queue.send(Serializer.toJson(message))
-            return
         }
         else {
             logger.info("Message {} terminated", message.getId())
-            return
         }
     }
 
