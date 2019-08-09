@@ -15,7 +15,7 @@ class SimpleQueryProcessor implements QueryProcessor {
     StopWords stopwords = new StopWords()
 
     Query transform(String question) {
-        String[] tokens = question.trim().toLowerCase().split('\\W+')
+        String[] tokens = question.trim().toLowerCase().split('\\s+')
         List<String> terms = removeStopWords(tokens)
         String query = terms.collect { 'body:' + it }.join(' AND ')
 
