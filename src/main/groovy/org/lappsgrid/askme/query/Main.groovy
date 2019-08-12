@@ -31,11 +31,14 @@ class Main {
                 else {
                     logger.info("Received Message {}, processing question", id)
                     Query query = process(question.body.toString())
+                    Map params = question.getParameters()
                     Message response = new Message()
                     response.setBody(query)
                     response.setRoute([WEB_MBOX])
                     response.setCommand('query')
                     response.setId(id)
+                    response.setParameters(params)
+                    sleep(500)
                     po.send(response)
                     logger.info('Processed question {} sent back to web', id)
                 }
