@@ -21,17 +21,24 @@ class Main {
         box = new MailBox(EXCHANGE,MBOX,HOST) {
             @Override
             void recv(String s) {
-                Message question = Serializer.parse(s, Message)
-                String id = question.getId()
-                String command = question.getCommand()
+                Message message = Serializer.parse(s, Message)
+                String id = message.getId()
+                String command = message.getCommand()
                 if(command == 'EXIT' || command == 'QUIT'){
                     logger.info('Received shutdown message')
                     synchronized(lock) { lock.notify() }
                 }
-                else {
+                else if(command == 'PING') {
+                    String origin = message.getBody()
+                    logger.info('Received PING message from {}', origin)
+                    Message response = new Message()
+                    response.setCommand('PONG')
+                    response.setRoute([origin])
+                    po.send(response)
+                } else {
                     logger.info("Received Message {}, processing question", id)
-                    Query query = process(question.body.toString())
-                    Map params = question.getParameters()
+                    Query query = process(message.body.toString())
+                    Map params = message.getParameters()
                     Message response = new Message()
                     response.setBody(query)
                     response.setRoute([WEB_MBOX])
