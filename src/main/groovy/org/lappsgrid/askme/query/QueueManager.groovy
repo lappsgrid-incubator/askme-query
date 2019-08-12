@@ -20,6 +20,7 @@ class QueueManager extends MessageBox {
     TaskQueue queue
     PostOffice po
     List<Worker> workers
+    Object lock
 
     /**
      *
@@ -30,7 +31,7 @@ class QueueManager extends MessageBox {
      * @param factory  factory used to create workers
      * @param size     the number of workers to create
      */
-    QueueManager(String exchange, String address, String host, String qName, QueryFactory factory, int size = 1) {
+    QueueManager(String exchange, String address, String host, String qName, QueryFactory factory, int size = 1, Object lock) {
         super(exchange, address, host)
         queue = new TaskQueue(qName, host)
         po = new PostOffice(exchange, host)
@@ -39,6 +40,7 @@ class QueueManager extends MessageBox {
             workers.add(factory.create(po, queue))
         }
         workers.each { queue.register(it) }
+        this.lock = lock
     }
 
     /**
@@ -66,28 +68,30 @@ class QueueManager extends MessageBox {
         workers*.close()
         queue.close()
         po.close()
+        logger.info("Queue, workers, PostOffice, and super shut down")
     }
 
     @Override
     void recv(Message message) {
         if(message.getCommand() == 'EXIT' || message.getCommand() == 'QUIT'){
-            shutdown()
-            return
+            shutdown(lock)
         }
-        if(checkMessage(message)){
+         else {
+
             queue.send(Serializer.toJson(message))
         }
-        else {
-            logger.info("Message {} terminated", message.getId())
-        }
+
     }
 
-    void shutdown(){
+    void shutdown(Object lock){
         logger.info('Received shutdown message, terminating Query service')
-        close()
-        logger.info('Query service terminated')
-        System.exit(0)
+        synchronized(lock) { lock.notify() }
     }
+
+
+
+
+    //currently not used
     boolean checkMessage(Message message) {
         if (!message.getBody()) {
             Map error_check = [:]

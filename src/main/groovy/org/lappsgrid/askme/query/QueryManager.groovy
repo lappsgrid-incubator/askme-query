@@ -14,16 +14,26 @@ class QueryManager {
 
 
 
-    void run(){
+    void run(Object lock){
         logger.debug("Starting the query task queue.")
         PostOffice po = new PostOffice(EXCHANGE, HOST)
-        QueueManager queryMaster = new QueueManager(EXCHANGE,QUERY_MBOX,HOST,QUERY_Q, new QueryFactory(),1)
+        QueueManager queryMaster = new QueueManager(EXCHANGE,QUERY_MBOX,HOST,QUERY_Q, new QueryFactory(),1, lock)
         logger.debug("query task queue started, awaiting question.")
+
+        synchronized(lock) { lock.wait() }
+        po.close()
+        queryMaster.close()
+        logger.info("Query service terminated")
+        System.exit(0)
     }
 
 
 
     static void main(String[] args) {
-        new QueryManager().run()
+        Object lock = new Object()
+        Thread.start {
+            new QueryManager().run(lock)
+        }
+
     }
 }
