@@ -19,6 +19,8 @@ class QueryWorker extends Worker{
     int id
     CountDownLatch latch
     PostOffice po
+    String WEB_MBOX = 'web.mailbox'
+
 
     QueryWorker(int id, CountDownLatch latch, PostOffice po, TaskQueue queue){
         super(queue)
@@ -40,10 +42,12 @@ class QueryWorker extends Worker{
         Message question = Serializer.parse(json, Message)
         logger.info("Starting a QueryWorker for question {}", question.getId())
         Query query = process(question.body.toString())
-        question.setBody(query)
-        question.setRoute(['web.mailbox'])
-        question.setCommand('query')
-        po.send(question)
+        Message response = new Message()
+        response.setBody(query)
+        response.setRoute([WEB_MBOX])
+        response.setCommand('query')
+        response.setId(question.getId())
+        po.send(response)
         logger.info('Processed question, query sent back to web')
     }
 }

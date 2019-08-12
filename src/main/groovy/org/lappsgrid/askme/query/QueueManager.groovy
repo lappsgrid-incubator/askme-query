@@ -31,7 +31,7 @@ class QueueManager extends MessageBox {
      * @param factory  factory used to create workers
      * @param size     the number of workers to create
      */
-    QueueManager(String exchange, String address, String host, String qName, QueryFactory factory, int size = 1, Object lock) {
+    QueueManager(String exchange, String address, String host, String qName, QueryFactory factory, int size = 1, Object l) {
         super(exchange, address, host)
         queue = new TaskQueue(qName, host)
         po = new PostOffice(exchange, host)
@@ -40,7 +40,7 @@ class QueueManager extends MessageBox {
             workers.add(factory.create(po, queue))
         }
         workers.each { queue.register(it) }
-        this.lock = lock
+        lock = l
     }
 
     /**
