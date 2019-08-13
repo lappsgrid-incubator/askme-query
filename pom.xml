@@ -63,7 +63,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.lappsgrid.askme.query.QueryManager</mainClass>
+                                    <mainClass>org.lappsgrid.askme.query.Main</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
