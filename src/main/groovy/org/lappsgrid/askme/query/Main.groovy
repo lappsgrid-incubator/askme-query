@@ -24,6 +24,7 @@ class Main {
                 Message message = Serializer.parse(s, Message)
                 String id = message.getId()
                 String command = message.getCommand()
+
                 if(command == 'EXIT' || command == 'QUIT'){
                     logger.info('Received shutdown message')
                     synchronized(lock) { lock.notify() }
@@ -46,7 +47,10 @@ class Main {
                     response.setCommand('query')
                     response.setId(id)
                     response.setParameters(params)
+
+                    //askme-web needs time to start MailBox before response, otherwise response is lost
                     sleep(500)
+
                     po.send(response)
                     logger.info('Processed question {} sent back to web', id)
                 }
