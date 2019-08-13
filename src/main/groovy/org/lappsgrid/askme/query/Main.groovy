@@ -7,6 +7,13 @@ import org.lappsgrid.rabbitmq.topic.PostOffice
 import org.lappsgrid.serialization.Serializer
 import groovy.util.logging.Slf4j
 
+/**
+ * TODO:
+ * 1) Update imports to phase out eager (waiting on askme-core pom)
+ * 2) Add exceptions / case statements to recv method?
+ * 3) Update the non-taskqueue Query version
+ * 4) Best way to remove punctuation and stopwords?
+ */
 
 @Slf4j("logger")
 class Main {
@@ -26,17 +33,18 @@ class Main {
                 String command = message.getCommand()
 
                 if(command == 'EXIT' || command == 'QUIT'){
-                    logger.info('Received shutdown message')
+                    logger.info('Received shutdown message, terminating Query service')
                     synchronized(lock) { lock.notify() }
                 }
                 else if(command == 'PING') {
                     String origin = message.getBody()
-                    logger.info('Received PING message from and sending response to {}', origin)
+                    logger.info('Received PING message from and sending response back to {}', origin)
                     Message response = new Message()
                     response.setBody(MBOX)
                     response.setCommand('PONG')
                     response.setRoute([origin])
                     po.send(response)
+                    logger.info('Response PONG sent to {}', origin)
                 } else {
                     logger.info("Received Message {}, processing question", id)
                     Query query = process(message.body.toString())
@@ -47,17 +55,14 @@ class Main {
                     response.setCommand('query')
                     response.setId(id)
                     response.setParameters(params)
-
                     //askme-web needs time to start MailBox before response, otherwise response is lost
                     sleep(500)
-
                     po.send(response)
                     logger.info('Processed question {} sent back to web', id)
                 }
             }
         }
         synchronized(lock) { lock.wait() }
-        logger.info('Shutting down Query service')
         box.close()
         po.close()
         logger.info('Query service terminated')
@@ -71,6 +76,7 @@ class Main {
 
     }
     static void main(String[] args) {
+        logger.info('Starting Query service')
         Object lock = new Object()
         Thread.start {
             new Main().run(lock)
