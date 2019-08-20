@@ -8,3 +8,4 @@ target/
 *.gz
 dependency-reduced-pom.xml
 
+*.jar
