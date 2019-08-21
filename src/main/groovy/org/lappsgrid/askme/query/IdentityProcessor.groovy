@@ -1,7 +1,8 @@
 package org.lappsgrid.askme.query
 
-import org.lappsgrid.eager.mining.api.Query
-import org.lappsgrid.eager.mining.api.QueryProcessor
+import org.lappsgrid.askme.core.api.Query
+import org.lappsgrid.askme.core.api.QueryProcessor
+
 
 /**
  * Returns the input string unchanged.

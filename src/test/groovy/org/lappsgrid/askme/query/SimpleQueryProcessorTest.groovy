@@ -2,7 +2,7 @@ package org.lappsgrid.askme.query
 
 import org.junit.Ignore
 import org.junit.Test
-import org.lappsgrid.eager.mining.api.Query
+import org.lappsgrid.askme.core.api.Query
 
 @Ignore
 class SimpleQueryProcessorTest {

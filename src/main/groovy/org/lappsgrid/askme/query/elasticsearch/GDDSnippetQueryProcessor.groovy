@@ -1,7 +1,7 @@
 package org.lappsgrid.askme.query.elasticsearch
 
-import org.lappsgrid.eager.mining.api.Query
-import org.lappsgrid.eager.mining.api.QueryProcessor
+import org.lappsgrid.askme.core.api.Query
+import org.lappsgrid.askme.core.api.QueryProcessor
 import org.lappsgrid.askme.query.StopWords
 
 /**

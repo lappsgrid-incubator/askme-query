@@ -1,9 +1,6 @@
 package org.lappsgrid.askme.query
 
-import org.lappsgrid.eager.mining.api.Query
-
-
-//import org.lappsgrid.eager.mining.core.json.Serializer
+import org.lappsgrid.askme.core.api.Query
 import org.lappsgrid.serialization.Serializer
 
 import org.lappsgrid.rabbitmq.Message
