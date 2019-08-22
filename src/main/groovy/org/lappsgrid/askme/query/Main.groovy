@@ -22,10 +22,6 @@ import groovy.util.logging.Slf4j
 @Slf4j("logger")
 class Main {
     static final Configuration config = new Configuration()
-    static {
-        System.setProperty(RabbitMQ.USERNAME_PROPERTY, config.USERNAME)
-        System.setProperty(RabbitMQ.PASSWORD_PROPERTY, config.PASSWORD)
-    }
 
     static final String MBOX = 'query.mailbox'
 //    static final String HOST = "rabbitmq.lappsgrid.org"
