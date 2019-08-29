@@ -12,9 +12,10 @@ import org.lappsgrid.askme.core.api.QueryProcessor
 class SimpleQueryProcessor implements QueryProcessor {
 
 
-    StopWords stopwords = new StopWords()
+    final StopWords stopwords = new StopWords()
 
     Query transform(String question) {
+        //TODO normalize contractions and remove punctuation.
         String[] tokens = question.trim().toLowerCase().split('\\s+')
         List<String> terms = removeStopWords(tokens)
         String query = terms.collect { 'body:' + it }.join(' AND ')
