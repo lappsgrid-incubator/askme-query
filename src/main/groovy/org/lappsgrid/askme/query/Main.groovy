@@ -31,7 +31,7 @@ class Main {
 
     void run() {
         Object lock = new Object()
-        box = new MailBox(config.EXCHANGE, config.QUERY_MBOX, config.HOST) {
+        box = new MailBox(config.EXCHANGE, 'query.mailbox', config.HOST) {
             @Override
             void recv(String s) {
                 logger.info("Message received.")
