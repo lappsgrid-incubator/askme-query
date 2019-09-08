@@ -3,6 +3,8 @@ package org.lappsgrid.askme.query
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.lappsgrid.askme.core.Configuration
+import org.lappsgrid.askme.core.api.AskmeMessage
+import org.lappsgrid.askme.core.api.Packet
 import org.lappsgrid.askme.core.api.Query
 import org.lappsgrid.askme.core.api.QueryProcessor
 import org.lappsgrid.rabbitmq.Message
@@ -35,7 +37,7 @@ class Main {
             @Override
             void recv(String s) {
                 logger.info("Message received.")
-                Message message = Serializer.parse(s, Message)
+                AskmeMessage message = Serializer.parse(s, AskmeMessage)
                 String id = message.getId()
                 String command = message.getCommand()
                 if(command == 'EXIT' || command == 'QUIT'){
@@ -45,7 +47,7 @@ class Main {
                 else if(command == 'PING') {
                     logger.info('Received PING message from and sending response back to {}', message.route[0])
                     Message response = new Message()
-                    response.setBody('PONG')
+//                    response.setBody('PONG')
                     response.setCommand('PONG')
                     response.setRoute(message.route)
                     logger.info('Response PONG sent to {}', response.route[0])
@@ -53,8 +55,10 @@ class Main {
                 } else {
                     logger.info("Received Message {}, processing question", id)
                     String destination = message.route[0] ?: 'the void'
-                    Query q = processor.transform(message.body.toString())
-                    message.set("query", Serializer.toJson(q))
+                    Packet packet = message.body
+                    packet.query = processor.transform(packet.query)
+                    //message.set("query", Serializer.toJson(q))
+                    message.body = packet
                     Main.this.po.send(message)
                     logger.info('Processed question {} sent to {}', id, destination)
                 }
