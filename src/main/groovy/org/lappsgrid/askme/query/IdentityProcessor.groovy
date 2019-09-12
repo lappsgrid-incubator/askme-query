@@ -9,8 +9,9 @@ import org.lappsgrid.askme.core.api.QueryProcessor
  */
 class IdentityProcessor implements QueryProcessor {
 
-    Query transform(String question) {
-        List<String> terms = question.tokenize(' ')
-        return new Query(question, question, terms)
+    Query transform(Query query) {
+        query.query = query.question
+        query.terms = query.question.tokenize(' ')
+        return query
     }
 }

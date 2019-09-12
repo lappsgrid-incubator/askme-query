@@ -13,7 +13,8 @@ class GDDSnippetQueryProcessor implements QueryProcessor {
 
     StopWords stopwords = new StopWords()
 
-    Query transform(String question) {
+    Query transform(Query query) {
+        String question = query.question
         String[] tokens = question.trim().split('\\W+')
         List<String> terms = removeStopWords(tokens)
         if (question.endsWith('?')) {
@@ -21,15 +22,14 @@ class GDDSnippetQueryProcessor implements QueryProcessor {
         }
         String encoded = URLEncoder.encode(question, 'UTF-8')
 
-        String query = "https://geodeepdive.org/api/snippets?limit=$limit&term=$encoded&clean"
+        String queryString = "https://geodeepdive.org/api/snippets?limit=$limit&term=$encoded&clean"
         if (inclusive) {
             query += "&inclusive=true"
         }
 
-        return new Query()
-                .query(query)
-                .question(question)
-                .terms(terms);
+        query.query = queryString
+        query.terms = terms
+        return query
     }
 
     List<String> removeStopWords(String[] tokens) {

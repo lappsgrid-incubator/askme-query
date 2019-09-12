@@ -12,10 +12,11 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 class ESQueryProcessor implements QueryProcessor {
 
     @Override
-    Query transform(String question) {
-        return matchQuery('contents', question)
+    Query transform(Query query) {
+        query.query = matchQuery('contents', query.question)
                 .operator(Operator.AND)
                 .toString()
+        return query
     }
 
     static void main(String[] args) {

@@ -37,6 +37,7 @@ class Main {
             @Override
             void recv(String s) {
                 logger.info("Message received.")
+                logger.debug("Message: {}", s)
                 AskmeMessage message = Serializer.parse(s, AskmeMessage)
                 String id = message.getId()
                 String command = message.getCommand()
@@ -55,7 +56,7 @@ class Main {
                 } else {
                     logger.info("Received Message {}, processing question", id)
                     String destination = message.route[0] ?: 'the void'
-                    Packet packet = message.body
+                    Packet packet = (Packet) message.body
                     packet.query = processor.transform(packet.query)
                     //message.set("query", Serializer.toJson(q))
                     message.body = packet

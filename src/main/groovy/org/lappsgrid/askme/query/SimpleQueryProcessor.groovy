@@ -16,7 +16,11 @@ class SimpleQueryProcessor implements QueryProcessor {
 
     Query transform(Query query) {
         //TODO normalize contractions and remove punctuation.
-        String[] tokens = query.question.trim().toLowerCase().split('\\s+')
+        String question = query.question.trim()
+        if (question.endsWith('?')) {
+            question = question.substring(0, question.length()-1)
+        }
+        String[] tokens = question.trim().toLowerCase().split('\\s+')
         query.terms = removeStopWords(tokens)
         query.query = query.terms.collect { 'body:' + it }.join(' AND ')
 
