@@ -11,6 +11,12 @@ import org.lappsgrid.askme.core.api.QueryProcessor
 @Slf4j("logger")
 class SimpleQueryProcessor implements QueryProcessor {
 
+    final static String COVID = "(body:coronavirus or body:covid or body:sar-cov-2)"
+    final static Map<String, String> terms = [
+        covid: COVID,
+        coronavirus: COVID,
+        'sars-cov-2': COVID
+    ]
 
     final StopWords stopwords = new StopWords()
 
@@ -22,9 +28,18 @@ class SimpleQueryProcessor implements QueryProcessor {
         }
         String[] tokens = question.trim().toLowerCase().split('\\s+')
         query.terms = removeStopWords(tokens)
-        query.query = query.terms.collect { 'body:' + it }.join(' AND ')
+//        query.query = query.terms.collect { '(body:' + it + ' OR abstract:' + it + ')' }.join(' AND ')
 
+        query.query = query.terms.collect{ expand it }.join(' AND ')
         query
+    }
+
+    String expand(String term) {
+        String expansion = terms[term]
+        if (expansion) {
+            return expansion
+        }
+        return "body:" + term
     }
 
     List<String> removeStopWords(String[] tokens) {

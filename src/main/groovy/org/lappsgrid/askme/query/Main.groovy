@@ -27,9 +27,15 @@ import groovy.util.logging.Slf4j
 class Main {
     static final Configuration config = new Configuration()
 
-    final PostOffice po = new PostOffice(config.EXCHANGE, config.HOST)
-    final SimpleQueryProcessor processor = new SimpleQueryProcessor()
+    final PostOffice po
+    final SimpleQueryProcessor processor
     MailBox box
+
+    Main() {
+        println "RabbitMQ Host: ${config.HOST}"
+        po = new PostOffice(config.EXCHANGE, config.HOST)
+        processor = new SimpleQueryProcessor()
+    }
 
     void run() {
         Object lock = new Object()
