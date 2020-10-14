@@ -16,6 +16,7 @@ import org.lappsgrid.askme.core.api.Packet
 import org.lappsgrid.askme.core.concurrent.Signal
 import org.lappsgrid.askme.core.metrics.Tags
 import org.lappsgrid.rabbitmq.Message
+import org.lappsgrid.rabbitmq.RabbitMQ
 import org.lappsgrid.rabbitmq.topic.MailBox
 import org.lappsgrid.rabbitmq.topic.PostOffice
 import org.lappsgrid.serialization.Serializer
@@ -46,10 +47,10 @@ class Main {
     Timer timer
 
     Main() {
+
         logger.info("Host    : {}", config.HOST)
         logger.info("Exchange: {}", config.EXCHANGE)
         logger.info("Address : {}", config.QUERY_MBOX)
-
         po = new PostOffice(config.EXCHANGE, config.HOST)
         processor = new SimpleQueryProcessor()
         init()
@@ -119,6 +120,8 @@ class Main {
     }
 
     static void main(String[] args) {
+//        System.setProperty("RABBIT_USERNAME", "rabbit")
+//        System.setProperty("RABBIT_PASSWORD", "rabbit")
         new Main().run()
     }
 
