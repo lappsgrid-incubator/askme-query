@@ -103,7 +103,8 @@ class Main {
                     logger.info("Received Message {}, processing question", id)
                     String destination = message.route[0] ?: 'the void'
                     Packet packet = (Packet) message.body
-                    packet.query = timer.recordCallable { processor.transform(packet.query) }
+                    //packet.query = timer.recordCallable { processor.transform(packet.query) }
+                    packet.query = processor.transform(packet.query)
                     //message.set("query", Serializer.toJson(q))
                     message.body = packet
                     Main.this.po.send(message)
