@@ -13,3 +13,5 @@ src/main/resources/build
 
 VERSION
 Version.java
+
+.DS_Store
