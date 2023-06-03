@@ -1,18 +1,27 @@
 package org.lappsgrid.askme.query
 
 import groovy.transform.CompileStatic
-import groovy.transform.TypeChecked
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Timer
+import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.lappsgrid.askme.core.Configuration
 import org.lappsgrid.askme.core.api.AskmeMessage
 import org.lappsgrid.askme.core.api.Packet
-import org.lappsgrid.askme.core.api.Query
-import org.lappsgrid.askme.core.api.QueryProcessor
+import org.lappsgrid.askme.core.concurrent.Signal
+import org.lappsgrid.askme.core.metrics.Tags
 import org.lappsgrid.rabbitmq.Message
 import org.lappsgrid.rabbitmq.RabbitMQ
 import org.lappsgrid.rabbitmq.topic.MailBox
 import org.lappsgrid.rabbitmq.topic.PostOffice
 import org.lappsgrid.serialization.Serializer
 import groovy.util.logging.Slf4j
+import io.micrometer.core.instrument.binder.logging.LogbackMetrics
 
 /**
  * TODO:
@@ -31,38 +40,70 @@ class Main {
     final SimpleQueryProcessor processor
     MailBox box
 
+    final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+
+    Counter queriesProccessed
+    Counter messagesReceived
+    Timer timer
+
     Main() {
-        println "RabbitMQ Host: ${config.HOST}"
+
+        logger.info("Host    : {}", config.HOST)
+        logger.info("Exchange: {}", config.EXCHANGE)
+        logger.info("Address : {}", config.QUERY_MBOX)
         po = new PostOffice(config.EXCHANGE, config.HOST)
         processor = new SimpleQueryProcessor()
+        init()
+    }
+
+    void init() {
+        new ClassLoaderMetrics().bindTo(registry)
+        new JvmMemoryMetrics().bindTo(registry)
+        new JvmGcMetrics().bindTo(registry)
+        new ProcessorMetrics().bindTo(registry)
+        new JvmThreadMetrics().bindTo(registry)
+//        new LogbackMetrics().bindTo(registry)
+
+        queriesProccessed = registry.counter("queries_count", "service", Tags.QUERY)
+        messagesReceived = registry.counter("messages_count", "service", Tags.QUERY)
+        timer = registry.timer("queries_timer", "service", Tags.QUERY)
     }
 
     void run() {
-        Object lock = new Object()
-        box = new MailBox(config.EXCHANGE, 'query.mailbox', config.HOST) {
+        logger.info("Service started")
+        Signal exitSignal = new Signal()
+        box = new MailBox(config.EXCHANGE, config.QUERY_MBOX, config.HOST) {
             @Override
             void recv(String s) {
-                logger.info("Message received.")
-                logger.debug("Message: {}", s)
+                messagesReceived.increment()
+                logger.trace("Message received.")
+                logger.trace("Message: {}", s)
                 AskmeMessage message = Serializer.parse(s, AskmeMessage)
                 String id = message.getId()
                 String command = message.getCommand()
                 if(command == 'EXIT' || command == 'QUIT'){
                     logger.info('Received shutdown message, terminating Query service')
-                    synchronized(lock) { lock.notify() }
+                    exitSignal.send()
                 }
                 else if(command == 'PING') {
                     logger.info('Received PING message from and sending response back to {}', message.route[0])
+                    message.setCommand('PONG')
+                    logger.info('Response PONG sent to {}', message.route[0])
+                    Main.this.po.send(message)
+                } else if (command == 'METRICS') {
                     Message response = new Message()
-//                    response.setBody('PONG')
-                    response.setCommand('PONG')
-                    response.setRoute(message.route)
-                    logger.info('Response PONG sent to {}', response.route[0])
+                    response.id = message.id
+                    response.setCommand('ok')
+                    response.body(registry.scrape())
+                    response.route = message.route
+                    logger.debug('Metrics sent to {}', response.route[0])
                     Main.this.po.send(response)
                 } else {
+                    queriesProccessed.increment()
                     logger.info("Received Message {}, processing question", id)
                     String destination = message.route[0] ?: 'the void'
                     Packet packet = (Packet) message.body
+                    //packet.query = timer.recordCallable { processor.transform(packet.query) }
                     packet.query = processor.transform(packet.query)
                     //message.set("query", Serializer.toJson(q))
                     message.body = packet
@@ -71,19 +112,18 @@ class Main {
                 }
             }
         }
-        synchronized(lock) { lock.wait() }
+        exitSignal.await()
+        logger.info("Service terminating")
         box.close()
         po.close()
-        logger.info('Query service terminated')
+        logger.info('Service terminated')
 
     }
 
     static void main(String[] args) {
-        logger.info('Starting Query service')
-        Thread.start {
-            new Main().run()
-        }
-
+//        System.setProperty("RABBIT_USERNAME", "rabbit")
+//        System.setProperty("RABBIT_PASSWORD", "rabbit")
+        new Main().run()
     }
 
 }

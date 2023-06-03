@@ -10,3 +10,8 @@ dependency-reduced-pom.xml
 
 *.jar
 src/main/resources/build
+
+VERSION
+Version.java
+
+.DS_Store

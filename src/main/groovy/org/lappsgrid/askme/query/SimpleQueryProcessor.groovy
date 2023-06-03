@@ -11,7 +11,7 @@ import org.lappsgrid.askme.core.api.QueryProcessor
 @Slf4j("logger")
 class SimpleQueryProcessor implements QueryProcessor {
 
-    final static String COVID = "(body:coronavirus or body:covid or body:sar-cov-2)"
+    final static String COVID = "(body:coronavirus or body:covid or body:sars-cov-2)"
     final static Map<String, String> terms = [
         covid: COVID,
         coronavirus: COVID,
