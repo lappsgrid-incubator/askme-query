@@ -2,17 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.lappsgrid.maven</groupId>
         <artifactId>groovy-parent-pom</artifactId>
         <version>1.1.2</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.lappsgrid.askme</groupId>
     <artifactId>query</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <properties>
         <lapps.serialization.version>2.7.0</lapps.serialization.version>
@@ -124,7 +125,6 @@
                     <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                 </configuration>
             </plugin>
-
             <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -149,16 +149,17 @@
             -->
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.lappsgrid</groupId>
             <artifactId>rabbitmq</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.lappsgrid.askme</groupId>
             <artifactId>core</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.lappsgrid</groupId>
@@ -202,6 +203,7 @@
             <version>1.4.1</version>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>elasticsearch-releases</id>
@@ -214,4 +216,5 @@
             </snapshots>
         </repository>
     </repositories>
+
 </project>
