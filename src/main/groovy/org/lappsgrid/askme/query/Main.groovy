@@ -48,9 +48,9 @@ class Main {
 
     Main() {
 
-        logger.info("Host    : {}", config.HOST)
-        logger.info("Exchange: {}", config.EXCHANGE)
-        logger.info("Address : {}", config.QUERY_MBOX)
+        logger.info("Host     : {}", config.HOST)
+        logger.info("Exchange : {}", config.EXCHANGE)
+        logger.info("Address  : {}", config.QUERY_MBOX)
         po = new PostOffice(config.EXCHANGE, config.HOST)
         processor = new SimpleQueryProcessor()
         init()
